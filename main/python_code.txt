@@ -1,0 +1,5 @@
+from PIL import Image
+import numpy
+img = Image.open("C:/recovery/capture.png").convert("L")
+imgarray=numpy.array(img)
+print(imgarray.shape)

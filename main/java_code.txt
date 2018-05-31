@@ -1,0 +1,59 @@
+package javaapplication9;
+import java.io.*;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.objdetect.CascadeClassifier;
+import org.opencv.core.Size;
+public class JavaApplication9 {
+    public static void main(String[] args) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        System.out.println("Scanning Image...Please weight");
+        CascadeClassifier fd=new CascadeClassifier();
+        fd.load("C:/openCV/opencv/sources/data/haarcascades/haarcascade_frontalface_alt.xml");
+        Mat image=Imgcodecs.imread("C:\\Users\\SHUBHAM\\Desktop\\important\\project\\check_images\\fc5.jpg");
+        MatOfRect faces=new MatOfRect();
+        fd.detectMultiScale(image,faces);
+        System.out.println(String.format("Detected %s faces", faces.toArray().length));
+        Rect rectCrop=null;
+        for (Rect rect : faces.toArray()) {
+            Imgproc.rectangle(image, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
+                    new Scalar(0, 255, 0));
+            rectCrop = new Rect(rect.x, rect.y, rect.width, rect.height);
+}
+        Mat image_roi = new Mat(image,rectCrop);
+        Mat resize_img=new Mat();
+        Size sz=new Size(48,48);
+        Imgproc.resize(image_roi,resize_img,sz);
+        Imgproc.cvtColor(resize_img, resize_img, Imgproc.COLOR_RGB2GRAY);
+        try{
+        File fl=new File("C:\\Users\\SHUBHAM\\Desktop\\important\\project\\test_images\\data.txt");
+        FileWriter flw;
+        flw=new FileWriter("C:\\Users\\SHUBHAM\\Desktop\\important\\project\\test_images\\data.txt",true);
+        BufferedWriter bw=new BufferedWriter(flw);
+        BufferedReader br=new BufferedReader(new FileReader(fl));
+        String line;
+        while((line=br.readLine())!=null){
+        String[] prcss=line.split(",");
+        String nxt=(Integer.parseInt(prcss[prcss.length-1])+1)+"";
+        
+        String to_write=","+nxt;
+        bw.write(to_write);
+        bw.close();
+        String xyz="C:\\Users\\SHUBHAM\\Desktop\\important\\project\\test_images\\"+nxt+".jpg";
+        Imgcodecs.imwrite(xyz,resize_img);
+        break;
+        }
+        
+        }
+        catch(IOException e){
+        System.err.println(e);
+        }
+    }
+    
+}
